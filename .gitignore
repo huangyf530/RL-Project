@@ -1,0 +1,10 @@
+*.tar
+rl_env
+*/__pycache__
+**/__pycache__
+*.pyc
+.vscode
+trl-code
+checkpoints
+data
+Rewarder/model
