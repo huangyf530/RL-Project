@@ -1,6 +1,5 @@
 #!/bin/bash
 # export CUDA_VISIBLE_DEVICES=5
-export WANDB_API_KEY=2f567206226adcf81123cd10d9b95c4446e29dba
 CONFIG_PATH="pretrained_gpt2/config.json"
 MODEL_PATH="pretrained_gpt2/pytorch_model.bin"
 VOCAB_PATH="pretrained_gpt2/vocab.txt"
