@@ -53,7 +53,11 @@ class Rewarder(object):
         srcs = []
         trgs = []
         for sens in poems_sens:
-            assert len(sens) == fixed_sens_num
+            try:
+                assert len(sens) == fixed_sens_num
+            except AssertionError:
+                print(sens)
+                quit()
             for i in range(1, len(sens)):
                 srcs.append("|".join(sens[0:i]))
                 trgs.append(sens[i])
@@ -113,13 +117,13 @@ class Rewarder(object):
 
         return lm_scores, lm_nlls, mi, tfidfs
 
-    def get_mixed_scores_with_poems(self, poems, fixed_sens_num, ori_alpha=[0.26, 0.26,  0.22, 0.26]):
+    def get_mixed_scores_with_poems(self, poems, fixed_sens_num, ori_alpha=[0.26, 0.26,  0.22, 0.26], ori_beta=[0, 0, 0, 0]):
         # alpha: lm,  mi, tfidf, dis
-        alpha = []
+        alpha = ori_alpha
         sumv = np.sum(ori_alpha)
         alpha = [v/sumv for v in ori_alpha]
-        #print ("mixed alpha:")
-        #print (alpha)
+        # print ("mixed alpha:")
+        # print (alpha)
 
         poems_chars, poems_sens, all_sens = [], [], []
 
@@ -149,7 +153,11 @@ class Rewarder(object):
         # lm
         if alpha[0] > 0:
             lm_limits, lm_scores, lm_nlls = self.__get_lm_score(all_sens, mu=-4.606-0.1, sigma=1.334, beta=0.25)
-            assert len(lm_scores) % fixed_sens_num == 0
+            try:
+                assert len(lm_scores) % fixed_sens_num == 0
+            except AssertionError as e:
+                print(len(lm_scores))
+                quit()
             lm_num = int(len(lm_scores) / fixed_sens_num)
             lmvec = np.split(np.array(lm_scores), lm_num)
             lm_vals = np.array([np.mean(val) for val in lmvec])
@@ -157,7 +165,7 @@ class Rewarder(object):
         # mi
         if alpha[1] > 0:
             if alpha[0] == 0.0:
-                 lm_limits, lm_scores, lm_nlls = self.get_lmscore(all_sens)
+                 lm_limits, lm_scores, lm_nlls = self.__get_lm_score(all_sens, mu=-4.606-0.1, sigma=1.334, beta=0.25)
             mi = self.__get_mi_score(poems_sens, lm_nlls, lm_limits, fixed_sens_num)
             assert len(mi) % (fixed_sens_num-1) ==0
             mi_num = int(len(mi) / (fixed_sens_num-1))

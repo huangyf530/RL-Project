@@ -129,6 +129,7 @@ class PPOTrainer:
 
         t = time.time()
         logprobs, ref_logprobs, values = self.batched_forward_pass(model_input, gen_len)
+        # log probs, ref_logprobs, values: batch_size, gen_len, x
         timing['time/ppo/forward_pass'] = time.time()-t
 
         t = time.time()
@@ -214,7 +215,7 @@ class PPOTrainer:
             delta = rewards[:, t] + self.ppo_params['gamma'] * nextvalues - values[:, t]
             lastgaelam = delta + self.ppo_params['gamma'] * self.ppo_params['lam'] * lastgaelam
             advantages_reversed.append(lastgaelam)
-        advantages = torch.stack(advantages_reversed[::-1]).transpose(0, 1)
+        advantages = torch.stack(advantages_reversed[::-1]).transpose(0, 1) # (1, gen_len)
 
         returns = advantages + values
         advantages = whiten(advantages)

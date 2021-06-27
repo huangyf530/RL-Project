@@ -8,3 +8,7 @@ trl-code
 checkpoints
 data
 Rewarder/model
+wandb
+pretrained_gpt2
+output
+test*
